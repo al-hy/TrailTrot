@@ -1,6 +1,7 @@
 package com.example.ahy.myapplication;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +12,11 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_MESSAGE = "com.example.ahy.myapplication.MESSAGE";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -22,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Incorrect Login or Password!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Incorrect Login or Password!", Toast.LENGTH_SHORT).show();
+                sendMessage(view);
             }
         });
 
@@ -35,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
         EditText username =  (EditText) findViewById(R.id.username);
         System.out.println(username.getText().toString());
+    }
+
+    protected void sendMessage(View view) {
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
+        EditText editText = (EditText) findViewById(R.id.username);
+        String message = editText.getText().toString();
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 
 }
