@@ -1,0 +1,29 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ahy.myapplication.TrailRecommendationActivity"
+    android:orientation="horizontal">
+    
+    <!--This is to displace the contents of each listed items-->
+    <!--The other one is used to actually list out the items-->
+
+    <ImageView
+        android:adjustViewBounds="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"
+        android:id="@+id/trailPreviewImage"
+        android:onClick="onClick"
+        />
+
+    <TextView
+        android:id="@+id/trailName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/trailPreviewImage"
+        android:textColor="#FFFFFF"/>
+
+
+</FrameLayout>
