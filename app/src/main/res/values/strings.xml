@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name" translatable="false">TrailTrot</string>
+    <string name="app_name" translatable="false">TrailTrotter</string>
+    <string name="location_alert">Use location?</string>
+    <string name="id">tdTn5HxEIRbOt-nQ5sOMEw</string>
+    <string name="secret">BGqobpZaB3jij9owNhcVtzUOnCzS5cdNu0sUua38Uo774OBmg6pbmgUvkLKEyRa9</string>
+
 </resources>

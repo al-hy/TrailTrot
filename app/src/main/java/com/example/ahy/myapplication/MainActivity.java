@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE = "com.example.ahy.myapplication.MESSAGE";
+    //ublic static final String EXTRA_MESSAGE = "com.example.ahy.myapplication.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,34 +20,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button loginButton = (Button) findViewById(R.id.loginButton);
-        Button registerButton = (Button) findViewById(R.id.registerButton);
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        Thread splash = new Thread() {
             @Override
-            public void onClick(View view) {
-                //Toast.makeText(MainActivity.this, "Incorrect Login or Password!", Toast.LENGTH_SHORT).show();
-                sendMessage(view);
+            public void run() {
+                try {
+                    sleep(3000);
+                    Intent intent = new Intent(getApplicationContext(), TrailRecommendationActivity.class);
+                    startActivity(intent);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        };
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-            public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Registration coming soon!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        EditText username =  (EditText) findViewById(R.id.username);
-        System.out.println(username.getText().toString());
-    }
-
-    protected void sendMessage(View view) {
-        Intent intent = new Intent(this, TrailRecommendationActivity.class);
-        EditText editText = (EditText) findViewById(R.id.username);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
+        splash.start();
     }
 
 }
