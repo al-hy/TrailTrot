@@ -122,10 +122,9 @@ public class SelectedTrailActivity extends AppCompatActivity {
                         ratingBar = (ImageView) findViewById(R.id.ratingBar);
                         reviewCount = (TextView) findViewById(R.id.selectedReviewCount);
 
+                        StringBuilder addressBuilder = new StringBuilder();
                         Address address = selectedTrailInfo.getAddress();
                         String[] displayAddress = address.getDisplayAddress();
-
-                        StringBuilder addressBuilder = new StringBuilder();
 
                         for(int i = 0; i < displayAddress.length; i++) {
                             if(i == displayAddress.length - 1) {

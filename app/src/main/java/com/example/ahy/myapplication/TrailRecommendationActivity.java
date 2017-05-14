@@ -12,10 +12,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -77,7 +79,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 longitude = location.getLongitude();
                 Log.i("LAT", Double.toString(latitude));
                 Log.i("LONG", Double.toString(longitude));
-                getYelp();
+                getYelp(null);
                 //textView.append("\n " + location.getLatitude() + " " + location.getLongitude());
             }
 
@@ -118,10 +120,18 @@ public class TrailRecommendationActivity extends AppCompatActivity{
         };
 
         button = (Button) findViewById(R.id.searchButton);
-
         configure_button();
 
         //End of Location Services
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 editText = (EditText) findViewById(R.id.searchLocation);
+                 getYelp(editText.getText().toString());
+             }
+        });
 
     }
 
@@ -158,7 +168,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
 //        });
     }
 
-    public void getYelp() {
+    public void getYelp(@Nullable final String searchLocation) {
 
         final AsyncTask<Void, Void, Void> yelpRequest = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -180,29 +190,38 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 editText = (EditText) findViewById(R.id.searchLocation);
                 String text = editText.getText().toString();
 
-                Call<HikingTrails> hikingTrails = service.getHikingTrails(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), "hiking", latitude ,longitude, 50);
-                hikingTrails.enqueue(new Callback<HikingTrails>() {
-                    @Override
-                    public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
-                        HikingTrails hikingTrails = response.body();
+                if(searchLocation != null) {
+                    Call<HikingTrails> hikingTrails = service.searchLocation(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), "hiking", searchLocation, 50);
+                    request(hikingTrails);
 
-                        List<Businesses> trails = hikingTrails.getBusinesses();
+                } else {
 
-                        listView = (ListView) findViewById(R.id.trailListView);
-                        trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
-                                TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo);
+                    Call<HikingTrails> hikingTrails = service.getHikingTrails(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), "hiking", latitude, longitude, 50);
+                    request(hikingTrails);
+                }
 
-                        listView.setAdapter(trailRecommendationActivityAdapter);
-                    }
-
-                    @Override
-                    public void onFailure(Call<HikingTrails> call, Throwable t) {
-                        Log.e("TEST", "Failed to get the hiking info");
-                        StringWriter errors = new StringWriter();
-                        t.printStackTrace(new PrintWriter(errors));
-                        Log.e("TEST", errors.toString());
-                    }
-                });
+//                hikingTrails.enqueue(new Callback<HikingTrails>() {
+//                    @Override
+//                    public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
+//                        HikingTrails hikingTrails = response.body();
+//
+//                        List<Businesses> trails = hikingTrails.getBusinesses();
+//
+//                        listView = (ListView) findViewById(R.id.trailListView);
+//                        trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
+//                                TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo);
+//
+//                        listView.setAdapter(trailRecommendationActivityAdapter);
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<HikingTrails> call, Throwable t) {
+//                        Log.e("TEST", "Failed to get the hiking info");
+//                        StringWriter errors = new StringWriter();
+//                        t.printStackTrace(new PrintWriter(errors));
+//                        Log.e("TEST", errors.toString());
+//                    }
+//                });
             }
 
             @Override
@@ -219,5 +238,30 @@ public class TrailRecommendationActivity extends AppCompatActivity{
         };
 
         yelpRequest.execute();
+    }
+
+    public void request(Call hikingTrails) {
+        hikingTrails.enqueue(new Callback<HikingTrails>() {
+            @Override
+            public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
+                HikingTrails hikingTrails = response.body();
+
+                List<Businesses> trails = hikingTrails.getBusinesses();
+
+                listView = (ListView) findViewById(R.id.trailListView);
+                trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
+                        TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo);
+
+                listView.setAdapter(trailRecommendationActivityAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<HikingTrails> call, Throwable t) {
+                Log.e("TEST", "Failed to get the hiking info");
+                StringWriter errors = new StringWriter();
+                t.printStackTrace(new PrintWriter(errors));
+                Log.e("TEST", errors.toString());
+            }
+        });
     }
 }

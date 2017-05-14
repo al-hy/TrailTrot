@@ -23,6 +23,11 @@ public interface YelpService {
                                        @Query("latitude") double latitude,
                                        @Query("longitude") double longitude,
                                        @Query("limit") int limit);
+    @GET("/v3/businesses/search")
+    Call<HikingTrails> searchLocation(@Header("Authorization") String accessToken,
+    @Query("term") String term,
+    @Query("location") String location,
+    @Query("limit") int limit);
 
     @GET("/v3/businesses/{id}/reviews")
     Call<TrailReviews> getTrailReviews(@Header("Authorization") String accessToken,
