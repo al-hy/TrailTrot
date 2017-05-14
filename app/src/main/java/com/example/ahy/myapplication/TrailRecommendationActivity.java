@@ -129,7 +129,11 @@ public class TrailRecommendationActivity extends AppCompatActivity{
              @Override
              public void onClick(View view) {
                  editText = (EditText) findViewById(R.id.searchLocation);
-                 getYelp(editText.getText().toString());
+                 if(editText.getText().toString().isEmpty()){
+                     getYelp(null);
+                 } else {
+                     getYelp(editText.getText().toString());
+                 }
              }
         });
 
@@ -190,12 +194,16 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 editText = (EditText) findViewById(R.id.searchLocation);
                 String text = editText.getText().toString();
 
-                if(searchLocation != null) {
+
+
+                if(searchLocation != null ) {
+                    Log.i("ERROR", "IN LOCATION");
+
                     Call<HikingTrails> hikingTrails = service.searchLocation(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), "hiking", searchLocation, 50);
                     request(hikingTrails);
 
                 } else {
-
+                    Log.i("ERROR", "IN LAT AND LONG");
                     Call<HikingTrails> hikingTrails = service.getHikingTrails(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), "hiking", latitude, longitude, 50);
                     request(hikingTrails);
                 }
