@@ -53,9 +53,9 @@ public class TrailRecommendationActivity extends AppCompatActivity{
     private double longitude;
     private EditText editText;
     private SwipeRefreshLayout swipeRefreshLayout;
-
     private YelpInfo yelpInfo;
     private Service service;
+    private Location userLocation;
 
     //When creating a listView, an adapter is needed for dynamic retrieval
     private TrailRecommendationActivityAdapter trailRecommendationActivityAdapter;
@@ -76,6 +76,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                userLocation = location;
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
                 Log.i("LAT", Double.toString(latitude));
@@ -266,7 +267,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
 
                 listView = (ListView) findViewById(R.id.trailListView);
                 trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
-                        TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo);
+                        TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo, userLocation);
 
                 listView.setAdapter(trailRecommendationActivityAdapter);
             }

@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.yelp.fusion.client.models.Location;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -29,15 +32,19 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
     private YelpInfo yelpInfo;
     private ImageView ratingBar;
     private TextView reviewCount;
+    private android.location.Location userLocation;
+    private android.location.Location trailLocation;
+    private TextView distance;
 
 
     public TrailRecommendationActivityAdapter(@NonNull Context context,
-                                              @LayoutRes int resource, @NonNull List<Businesses> objects, YelpInfo yelpInfo) {
+                                              @LayoutRes int resource, @NonNull List<Businesses> objects, YelpInfo yelpInfo, android.location.Location userLocation) {
         super(context, resource, objects);
         this.context = context;
         this.layoutResource = resource;
         this.trailRecommendation = objects;
         this.yelpInfo = yelpInfo;
+        this.userLocation = userLocation;
 
     }
 
@@ -47,7 +54,18 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(layoutResource, parent, false);
         final TextView trailName = (TextView) view.findViewById(R.id.trailName);
+        distance = (TextView) view.findViewById(R.id.distance);
 
+        trailLocation = new android.location.Location(userLocation);
+        trailLocation.setLatitude(trailRecommendation.get(position).getCoordinates().getLatitude());
+        trailLocation.setLongitude(trailRecommendation.get(position).getCoordinates().getLongitude());
+
+
+        float meters = userLocation.distanceTo(trailLocation);
+
+        double miles = Math.round((meters * 0.000621371192) * 100)/ 100.0;
+
+        distance.setText(Double.toString(miles) + " mi");
 
         imageView = (ImageView) view.findViewById(R.id.trailPreviewImage);
         ratingBar = (ImageView) view.findViewById(R.id.selectionRating);
