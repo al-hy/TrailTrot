@@ -18,7 +18,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -52,9 +54,6 @@ public class TrailRecommendationActivity extends AppCompatActivity{
     private EditText editText;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-//    @BindView(R.id.trailListView)
-//    ListView trailListView;
-
     private YelpInfo yelpInfo;
     private Service service;
 
@@ -65,13 +64,13 @@ public class TrailRecommendationActivity extends AppCompatActivity{
     public void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trail_selection);
+        editText = (EditText) findViewById(R.id.searchLocation);
+
 
         Intent intent = getIntent();
 
         //Add Location services here
-        textView = (TextView) findViewById(R.id.coordinates);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
 
 
         locationListener = new LocationListener() {
@@ -89,7 +88,6 @@ public class TrailRecommendationActivity extends AppCompatActivity{
 
                 locationManager.removeUpdates(locationListener);
 
-                //textView.append("\n " + location.getLatitude() + " " + location.getLongitude());
             }
 
             @Override
@@ -138,6 +136,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
             public void onRefresh() {
                 configure_button();
             }
+
         });
 
 
@@ -147,13 +146,23 @@ public class TrailRecommendationActivity extends AppCompatActivity{
         button.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
-                 editText = (EditText) findViewById(R.id.searchLocation);
                  if(editText.getText().toString().isEmpty()){
                      getYelp(null);
                  } else {
                      getYelp(editText.getText().toString());
                  }
              }
+        });
+
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    getYelp(editText.getText().toString());;
+                    return true;
+                }
+                return false;
+            }
         });
 
     }
@@ -183,27 +192,13 @@ public class TrailRecommendationActivity extends AppCompatActivity{
             return;
         }
 
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-
             if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 0, locationListener);
+                Log.i("NETWORK", "USED NETWORK FOR LOCATION");
             } else {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, locationListener);
+                Log.i("GPS", "USED GPS FOR LOCATION");
             }
-//            }
-//        });
-
-//        Location location = locationManager.getLastKnownLocation("gps");
-//        latitude = location.getLatitude();
-//        longitude = location.getLongitude();
-//        Log.i("LAT", Double.toString(latitude));
-//        Log.i("LONG", Double.toString(longitude));
-//        getYelp(null);
-
-
-
 
     }
 
@@ -243,28 +238,6 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                     request(hikingTrails);
                 }
 
-//                hikingTrails.enqueue(new Callback<HikingTrails>() {
-//                    @Override
-//                    public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
-//                        HikingTrails hikingTrails = response.body();
-//
-//                        List<Businesses> trails = hikingTrails.getBusinesses();
-//
-//                        listView = (ListView) findViewById(R.id.trailListView);
-//                        trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
-//                                TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo);
-//
-//                        listView.setAdapter(trailRecommendationActivityAdapter);
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<HikingTrails> call, Throwable t) {
-//                        Log.e("TEST", "Failed to get the hiking info");
-//                        StringWriter errors = new StringWriter();
-//                        t.printStackTrace(new PrintWriter(errors));
-//                        Log.e("TEST", errors.toString());
-//                    }
-//                });
             }
 
             @Override

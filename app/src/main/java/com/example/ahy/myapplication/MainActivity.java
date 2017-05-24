@@ -12,8 +12,6 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    //ublic static final String EXTRA_MESSAGE = "com.example.ahy.myapplication.MESSAGE";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

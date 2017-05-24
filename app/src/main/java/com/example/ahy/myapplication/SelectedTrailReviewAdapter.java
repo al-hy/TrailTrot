@@ -103,7 +103,11 @@ public class SelectedTrailReviewAdapter extends ArrayAdapter<Reviews> {
                 ratingBar.setImageResource(R.drawable.stars_small_5);
                 break;
         }
-//
+
+        /**
+         * Make each Yelp Review clickable and open up in browser
+         */
+
 //        imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {

@@ -35,7 +35,6 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private TextView textView;
     private String image, id, name;
     private SelectedTrailReviewAdapter selectedTrailReviewAdapter;
-    private TrailPhotoAdapter trailPhotoAdapter;
     private ImageView ratingBar;
     private TextView addressLine1;
     private TextView reviewCount;
@@ -49,8 +48,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private RecyclerView recyclerViewWeather;
     private RecyclerView.LayoutManager layoutManagerWeather;
     private RecyclerView.Adapter adapterWeather;
-//    private double longitude;
-//    private double latitude;
+
     private Address displayAddress;
     private Coordinates coordinates;
     private String rating;
@@ -100,15 +98,6 @@ public class SelectedTrailActivity extends AppCompatActivity {
          * PASS THE ACCESS TOKEN! RETRIEVE FROM INTENT
          */
 
-//        if(image.isEmpty()){
-//            imageView.setImageResource(R.drawable.no_image);
-//        } else {
-//            Picasso.with(this)
-//                    .load(image)
-//                    .resize(500, 400)
-//                    .centerInside()
-//                    .into(imageView);
-//        }
 
         textView = (TextView) findViewById(R.id.selectedTrailName);
         textView.setText(name);
@@ -165,9 +154,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
                 break;
         }
 
-
         getYelp();
-
 
     }
 
@@ -366,11 +353,6 @@ public class SelectedTrailActivity extends AppCompatActivity {
 
                         }
 
-//                        listView = (ListView) findViewById(R.id.userReview);
-//                        selectedTrailReviewAdapter = new SelectedTrailReviewAdapter(
-//                                SelectedTrailActivity.this, R.layout.trail_selected_reviews, reviews);
-//
-//                        listView.setAdapter(selectedTrailReviewAdapter);
                     }
 
                     @Override
