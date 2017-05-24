@@ -1,5 +1,7 @@
 package com.example.ahy.myapplication;
 
+import android.support.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,8 +30,7 @@ public class SelectedTrailInfo {
     private Address address;
     @JsonProperty("photos")
     private String[] trailPhotos;
-    @JsonProperty("coordinates")
-    private Coordinates coordinates;
+
 
     public String getName() {
         return name;
@@ -87,13 +88,6 @@ public class SelectedTrailInfo {
         this.trailPhotos = trailPhotos;
     }
 
-    public Coordinates getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
-    }
 
     public int getReviewCount() {
         return reviewCount;
@@ -101,58 +95,5 @@ public class SelectedTrailInfo {
 
     public void setReviewCount(int reviewCount) {
         this.reviewCount = reviewCount;
-    }
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class TrailPhotos {
-
-    //@JsonProperty("photos")
-    private String photosURL;
-
-    public String getPhotosURL() {
-        return photosURL;
-    }
-
-    public void setPhotosURL(String photosURL) {
-        this.photosURL = photosURL;
-    }
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class Address {
-    @JsonProperty("display_address")
-    private String[] displayAddress;
-
-    public String[] getDisplayAddress() {
-        return displayAddress;
-    }
-
-    public void setDisplayAddress(String[] displayAddress) {
-        this.displayAddress = displayAddress;
-    }
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class Coordinates {
-    @JsonProperty("latitude")
-    private double latitude;
-    @JsonProperty("longitude")
-    private double longitude;
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
     }
 }

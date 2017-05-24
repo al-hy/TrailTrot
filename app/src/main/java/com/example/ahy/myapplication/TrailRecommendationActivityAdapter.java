@@ -38,6 +38,7 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
         this.layoutResource = resource;
         this.trailRecommendation = objects;
         this.yelpInfo = yelpInfo;
+
     }
 
     @NonNull
@@ -111,7 +112,10 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
                 intent.putExtra("image", trailRecommendation.get(position).getImageURL());
                 intent.putExtra("name", trailRecommendation.get(position).getName());
                 intent.putExtra("yelpInfo", yelpInfo);
+                intent.putExtra("coordinates", trailRecommendation.get(position).getCoordinates());
                 intent.putExtra("id", trailRecommendation.get(position).getId());
+                intent.putExtra("address", trailRecommendation.get(position).getAddress());
+                intent.putExtra("rating", Double.toString(trailRecommendation.get(position).getRating()));
                 context.startActivity(intent);
             }
         });

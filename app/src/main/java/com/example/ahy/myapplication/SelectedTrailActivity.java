@@ -4,14 +4,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,7 +25,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 public class SelectedTrailActivity extends AppCompatActivity {
 
     private YelpInfo yelpInfo;
-    private YelpService service;
+    private Service service1;
+    private Service service2;
+    private Service service3;
     private EditText editText;
     private ListView listView;
     private ListView extraImages;
@@ -38,36 +39,131 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private ImageView ratingBar;
     private TextView addressLine1;
     private TextView reviewCount;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.Adapter adapter;
+    private TextView currentTemperature;
+    private ImageView currentWeather;
+
+
+    private RecyclerView recyclerViewWeather;
+    private RecyclerView.LayoutManager layoutManagerWeather;
+    private RecyclerView.Adapter adapterWeather;
+//    private double longitude;
+//    private double latitude;
+    private Address displayAddress;
+    private Coordinates coordinates;
+    private String rating;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trail_selected);
-        imageView = (ImageView) findViewById(R.id.selectedTrailPhoto) ;
 
         Intent intent = getIntent();
         image = intent.getStringExtra("image");
         yelpInfo = (YelpInfo) intent.getSerializableExtra("yelpInfo");
         name = intent.getStringExtra("name");
         id = intent.getStringExtra("id");
+        displayAddress = (Address) intent.getSerializableExtra("address");
+        coordinates = (Coordinates) intent.getSerializableExtra("coordinates");
+        rating = intent.getStringExtra("rating");
+        editText = (EditText) findViewById(R.id.searchLocation);
+        addressLine1 = (TextView) findViewById(R.id.address_line_1);
+        ratingBar = (ImageView) findViewById(R.id.ratingBar);
+        reviewCount = (TextView) findViewById(R.id.selectedReviewCount);
+        currentWeather = (ImageView) findViewById(R.id.currentWeather);
+        currentTemperature = (TextView) findViewById(R.id.currentTemperature);
+
+
+        /**
+         * Initialize RecyclerView for Extra Yelp Images
+         */
+        recyclerView = (RecyclerView) findViewById(R.id.trailPhotos);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(SelectedTrailActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+        /**
+         * Initialize RecyclerView for Weather Forecast
+         */
+
+        recyclerViewWeather = (RecyclerView) findViewById(R.id.weeklyForecast);
+        recyclerViewWeather.setHasFixedSize(true);
+        layoutManagerWeather = new LinearLayoutManager(SelectedTrailActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewWeather.setLayoutManager(layoutManagerWeather);
+
 
 
         /**
          * PASS THE ACCESS TOKEN! RETRIEVE FROM INTENT
          */
 
-        if(image.isEmpty()){
-            imageView.setImageResource(R.drawable.no_image);
-        } else {
-            Picasso.with(this)
-                    .load(image)
-                    .resize(500, 400)
-                    .centerInside()
-                    .into(imageView);
-        }
+//        if(image.isEmpty()){
+//            imageView.setImageResource(R.drawable.no_image);
+//        } else {
+//            Picasso.with(this)
+//                    .load(image)
+//                    .resize(500, 400)
+//                    .centerInside()
+//                    .into(imageView);
+//        }
 
         textView = (TextView) findViewById(R.id.selectedTrailName);
         textView.setText(name);
+
+        StringBuilder addressBuilder = new StringBuilder();
+
+        if (displayAddress.getDisplayAddress() != null) {
+
+            for (int i = 0; i < displayAddress.getDisplayAddress().length; i++) {
+                if (i == displayAddress.getDisplayAddress().length - 1) {
+                    addressBuilder.append(displayAddress.getDisplayAddress()[i]);
+                } else {
+                    addressBuilder.append(displayAddress.getDisplayAddress()[i]).append(", ");
+                }
+            }
+
+            addressLine1.setText(addressBuilder.toString());
+
+        }
+
+        switch (rating) {
+            case "0":
+                ratingBar.setImageResource(R.drawable.stars_small_0);
+                break;
+            case "0.5":
+                ratingBar.setImageResource(R.drawable.stars_small_0);
+                break;
+            case "1.0":
+                ratingBar.setImageResource(R.drawable.stars_small_1);
+                break;
+            case "1.5":
+                ratingBar.setImageResource(R.drawable.stars_small_1_half);
+                break;
+            case "2.0":
+                ratingBar.setImageResource(R.drawable.stars_small_2);
+                break;
+            case "2.5":
+                ratingBar.setImageResource(R.drawable.stars_small_2_half);
+                break;
+            case "3.0":
+                ratingBar.setImageResource(R.drawable.stars_small_3);
+                break;
+            case "3.5":
+                ratingBar.setImageResource(R.drawable.stars_small_3_half);
+                break;
+            case "4.0":
+                ratingBar.setImageResource(R.drawable.stars_small_4);
+                break;
+            case "4.5":
+                ratingBar.setImageResource(R.drawable.stars_small_4_half);
+                break;
+            case "5.0":
+                ratingBar.setImageResource(R.drawable.stars_small_5);
+                break;
+        }
 
 
         getYelp();
@@ -76,21 +172,64 @@ public class SelectedTrailActivity extends AppCompatActivity {
     }
 
     public void getYelp() {
-        final AsyncTask<Void, Void, Void> yelpRequest = new AsyncTask<Void, Void, Void>() {
+
+
+        final AsyncTask<Void, Void, Void> getPhotos = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
 
-                Retrofit retrofit = new Retrofit.Builder()
+                Retrofit retrofit1 = new Retrofit.Builder()
                         .baseUrl("https://api.yelp.com")
                         .addConverterFactory(JacksonConverterFactory.create())
                         .build();
 
-                service = retrofit.create(YelpService.class);
+                service1 = retrofit1.create(Service.class);
 
-                editText = (EditText) findViewById(R.id.searchLocation);
-                addressLine1 = (TextView) findViewById(R.id.address_line_1);
+                Call<SelectedTrailInfo> trailExtraPhotos = service1.getExtraPhotos(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), id);
+                trailExtraPhotos.enqueue(new Callback<SelectedTrailInfo>() {
+                    @Override
+                    public void onResponse(Call<SelectedTrailInfo> call, Response<SelectedTrailInfo> response) {
+                        SelectedTrailInfo selectedTrailInfo = response.body();
 
-                Call<TrailReviews> hikingTrails = service.getTrailReviews(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), id);
+                        Log.i("STRING", "STRING");
+
+                        if(selectedTrailInfo != null) {
+                            reviewCount.setText("(" + selectedTrailInfo.getReviewCount() + ")");
+                            adapter = new TrailPhotoAdapter(selectedTrailInfo.getTrailPhotos(), yelpInfo);
+                            recyclerView.setAdapter(adapter);
+                        }
+
+            }
+
+            @Override
+            public void onFailure(Call<SelectedTrailInfo> call, Throwable t) {
+                Log.e("TEST", "Failed to get the hiking info");
+                StringWriter errors = new StringWriter();
+                t.printStackTrace(new PrintWriter(errors));
+                Log.e("TEST", errors.toString());
+            }
+            });
+
+                return null;
+            }
+
+        };
+
+        getPhotos.execute();
+
+        final AsyncTask<Void, Void, Void> yelpRequest = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                Retrofit retrofit2 = new Retrofit.Builder()
+                        .baseUrl("https://api.yelp.com")
+                        .addConverterFactory(JacksonConverterFactory.create())
+                        .build();
+
+                service2 = retrofit2.create(Service.class);
+
+
+                Call<TrailReviews> hikingTrails = service2.getTrailReviews(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), id);
                 hikingTrails.enqueue(new Callback<TrailReviews>() {
                     @Override
                     public void onResponse(Call<TrailReviews> call, Response<TrailReviews> response) {
@@ -99,6 +238,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
                         List<Reviews> reviews = trailReviews.getReviews();
 
                         listView = (ListView) findViewById(R.id.userReview);
+                        listView.setScrollContainer(false);
                         selectedTrailReviewAdapter = new SelectedTrailReviewAdapter(
                                 SelectedTrailActivity.this, R.layout.trail_selected_reviews, reviews);
 
@@ -114,79 +254,128 @@ public class SelectedTrailActivity extends AppCompatActivity {
                     }
                 });
 
-                Call<SelectedTrailInfo> trailExtraPhotos = service.getExtraPhotos(yelpInfo.getTokenType() + " " + yelpInfo.getAccessToken(), id);
-                trailExtraPhotos.enqueue(new Callback<SelectedTrailInfo>() {
+
+                return null;
+            }
+
+        };
+
+        yelpRequest.execute();
+
+
+        final AsyncTask<Void, Void, Void> getWeather = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+
+                Retrofit retrofit3 = new Retrofit.Builder()
+                        .baseUrl("https://api.darksky.net")
+                        .addConverterFactory(JacksonConverterFactory.create())
+                        .build();
+
+                service3 = retrofit3.create(Service.class);
+
+                Call<Weather> forecast = service3.getForecast("b220231b558efd3165c5c65e01228ee3", coordinates.getLatitude(), coordinates.getLongitude());
+                forecast.enqueue(new Callback<Weather>() {
                     @Override
-                    public void onResponse(Call<SelectedTrailInfo> call, Response<SelectedTrailInfo> response) {
-                        SelectedTrailInfo selectedTrailInfo = response.body();
-                        ratingBar = (ImageView) findViewById(R.id.ratingBar);
-                        reviewCount = (TextView) findViewById(R.id.selectedReviewCount);
+                    public void onResponse(Call<Weather> call, Response<Weather> response) {
+                        Weather weather = response.body();
 
-                        StringBuilder addressBuilder = new StringBuilder();
-                        Address address = selectedTrailInfo.getAddress();
-                        String[] displayAddress = address.getDisplayAddress();
+                        if(weather != null) {
 
-                        for(int i = 0; i < displayAddress.length; i++) {
-                            if(i == displayAddress.length - 1) {
-                                addressBuilder.append(displayAddress[i]);
-                            } else {
-                                addressBuilder.append(displayAddress[i]).append(", ");
-                            }
+                            Currently currently = weather.getCurrently();
+                            if(currently.getTime() <= weather.getDaily().getForecast().get(0).getSunsetTime()) {
+
+                                switch (currently.getIcon()) {
+
+                                    case "clear-day":
+                                        currentWeather.setImageResource(R.drawable.clearday);
+                                        break;
+                                    case "clear-night":
+                                        currentWeather.setImageResource(R.drawable.clearnight);
+                                        break;
+                                    case "rain":
+                                        currentWeather.setImageResource(R.drawable.rainday);
+                                        break;
+                                    case "snow":
+                                        currentWeather.setImageResource(R.drawable.snow);
+                                        break;
+                                    case "sleet":
+                                        currentWeather.setImageResource(R.drawable.snow);
+                                        break;
+                                    case "wind":
+                                        currentWeather.setImageResource(R.drawable.daywind);
+                                        break;
+                                    case "fog":
+                                        currentWeather.setImageResource(R.drawable.fog);
+                                        break;
+                                    case "cloudy":
+                                        currentWeather.setImageResource(R.drawable.cloudy);
+                                        break;
+                                    case "partly-cloudy-day":
+                                        currentWeather.setImageResource(R.drawable.partlycloudyday);
+                                        break;
+                                    case "partly-cloudy-night":
+                                        currentWeather.setImageResource(R.drawable.partlycloudynight);
+                                        break;
+                                }
+
+                            } else  {
+
+                                    switch (currently.getIcon()) {
+
+                                        case "clear-day":
+                                            currentWeather.setImageResource(R.drawable.clearday);
+                                            break;
+                                        case "clear-night":
+                                            currentWeather.setImageResource(R.drawable.clearnight);
+                                            break;
+                                        case "rain":
+                                            currentWeather.setImageResource(R.drawable.rainnight);
+                                            break;
+                                        case "snow":
+                                            currentWeather.setImageResource(R.drawable.snow);
+                                            break;
+                                        case "sleet":
+                                            currentWeather.setImageResource(R.drawable.snow);
+                                            break;
+                                        case "wind":
+                                            currentWeather.setImageResource(R.drawable.nightwind);
+                                            break;
+                                        case "fog":
+                                            currentWeather.setImageResource(R.drawable.fog);
+                                            break;
+                                        case "cloudy":
+                                            currentWeather.setImageResource(R.drawable.cloudy);
+                                            break;
+                                        case "partly-cloudy-day":
+                                            currentWeather.setImageResource(R.drawable.partlycloudyday);
+                                            break;
+                                        case "partly-cloudy-night":
+                                            currentWeather.setImageResource(R.drawable.partlycloudynight);
+                                            break;
+                                    }
+
+                                }
+
+
+                            currentTemperature.setText(Integer.toString((int) (Math.round(currently.getTemperature()*1)/1.0)) + "\u00b0");
+
+                            List<Forecast> forecast = weather.getDaily().getForecast();
+                            adapterWeather = new WeatherActivityAdapter(forecast, weather.getTimezone());
+                            recyclerViewWeather.setAdapter(adapterWeather);
+
                         }
 
-                        addressLine1.setText(addressBuilder.toString());
-
-                        switch (Double.toString(selectedTrailInfo.getRating())) {
-                            case "0":
-                                ratingBar.setImageResource(R.drawable.stars_small_0);
-                                break;
-                            case "0.5":
-                                ratingBar.setImageResource(R.drawable.stars_small_0);
-                                break;
-                            case "1.0":
-                                ratingBar.setImageResource(R.drawable.stars_small_1);
-                                break;
-                            case "1.5":
-                                ratingBar.setImageResource(R.drawable.stars_small_1_half);
-                                break;
-                            case "2.0":
-                                ratingBar.setImageResource(R.drawable.stars_small_2);
-                                break;
-                            case "2.5":
-                                ratingBar.setImageResource(R.drawable.stars_small_2_half);
-                                break;
-                            case "3.0":
-                                ratingBar.setImageResource(R.drawable.stars_small_3);
-                                break;
-                            case "3.5":
-                                ratingBar.setImageResource(R.drawable.stars_small_3_half);
-                                break;
-                            case "4.0":
-                                ratingBar.setImageResource(R.drawable.stars_small_4);
-                                break;
-                            case "4.5":
-                                ratingBar.setImageResource(R.drawable.stars_small_4_half);
-                                break;
-                            case "5.0":
-                                ratingBar.setImageResource(R.drawable.stars_small_5);
-                                break;
-                        }
-
-                        reviewCount.setText("(" + selectedTrailInfo.getReviewCount() + ")");
-
-                        String[] photos = selectedTrailInfo.getTrailPhotos();
-
-                        extraImages = (ListView) findViewById(R.id.trailPhotos);
-
-                        trailPhotoAdapter = new TrailPhotoAdapter(
-                                SelectedTrailActivity.this, R.layout.trail_selected_photos, photos, yelpInfo);
-
-                        extraImages.setAdapter(trailPhotoAdapter);
+//                        listView = (ListView) findViewById(R.id.userReview);
+//                        selectedTrailReviewAdapter = new SelectedTrailReviewAdapter(
+//                                SelectedTrailActivity.this, R.layout.trail_selected_reviews, reviews);
+//
+//                        listView.setAdapter(selectedTrailReviewAdapter);
                     }
 
                     @Override
-                    public void onFailure(Call<SelectedTrailInfo> call, Throwable t) {
-                        Log.e("TEST", "Failed to get the hiking info");
+                    public void onFailure(Call<Weather> call, Throwable t) {
+                        Log.e("TEST", "Failed to get the forecast");
                         StringWriter errors = new StringWriter();
                         t.printStackTrace(new PrintWriter(errors));
                         Log.e("TEST", errors.toString());
@@ -196,8 +385,9 @@ public class SelectedTrailActivity extends AppCompatActivity {
 
                 return null;
             }
-
         };
-        yelpRequest.execute();
+
+        getWeather.execute();
+
     }
 }

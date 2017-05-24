@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by ahy on 5/8/17.
  */
 
-public class TrailPhotoAdapter extends ArrayAdapter<String> {
+public class TrailPhotoAdapter extends RecyclerView.Adapter<TrailPhotoAdapter.ViewHolder> {
 
     private Context context;
     private int layoutResource;
@@ -28,61 +29,56 @@ public class TrailPhotoAdapter extends ArrayAdapter<String> {
     private ImageView imageView;
     private YelpInfo yelpInfo;
 
-    public TrailPhotoAdapter(@NonNull Context context, @LayoutRes int resource,
-                             @NonNull String[] trailPhotos, YelpInfo yelpInfo) {
-        super(context, resource, trailPhotos);
-        this.context = context;
-        this.layoutResource = resource;
+    public TrailPhotoAdapter(@NonNull String[] trailPhotos, YelpInfo yelpInfo) {
         this.trailPhotos = trailPhotos;
         this.yelpInfo = yelpInfo;
 
     }
 
-    @NonNull
+
     @Override
-    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(layoutResource, parent, false);
+    public TrailPhotoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        int index = position;
-        index++;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.trail_selected_photos, parent, false);
 
-        imageView = (ImageView) view.findViewById(R.id.trailExtraPhotos);
+        ViewHolder viewHolder = new ViewHolder(view);
 
-        if (index < trailPhotos.length) {
-            Log.i("PHOTOS URL", trailPhotos[index]);
-
-            String url = trailPhotos[index];
-
-            if (trailPhotos[position] == null) {
-                try {
-                    Picasso.with(context)
-                            .load(R.drawable.no_image)
-                            .resize(100, 100).centerCrop()
-                            .placeholder(R.drawable.no_image)
-                            .error(R.drawable.no_image)
-                            .into(imageView);
-                } catch (Exception e) {
-                    e.getStackTrace();
-                }
-            } else {
-
-                try {
-                    Picasso.with(context)
-                            .load(url)
-                            .resize(460, 328).centerCrop()
-                            .placeholder(R.drawable.no_image)
-                            .error(R.drawable.no_image)
-                            .into(imageView);
-                } catch (Exception e) {
-                    e.getStackTrace();
-                }
-            }
-
-
-
-        }
-        return view;
+        return viewHolder;
     }
 
+    @Override
+    public void onBindViewHolder(TrailPhotoAdapter.ViewHolder holder, int position) {
+        imageView = holder.extraImages;
+
+        String url = trailPhotos[position];
+        try {
+            Picasso.with(context)
+                    .load(url)
+                    .resize(533, 400).centerCrop()
+                    .placeholder(R.drawable.no_image)
+                    .error(R.drawable.no_image)
+                    .into(imageView);
+        }
+        catch (Exception e) {
+                    e.getStackTrace();
+                }
+    }
+
+    @Override
+    public int getItemCount() {
+        return trailPhotos.length;
+    }
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView extraImages;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            extraImages = (ImageView) itemView.findViewById(R.id.trailExtraPhotos);
+        }
+    }
 }
+

@@ -4,13 +4,17 @@ package com.example.ahy.myapplication;
  * Created by ahy on 5/2/17.
  */
 
+import android.support.annotation.Nullable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.std.SerializableSerializer;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -29,7 +33,6 @@ public class HikingTrails {
     @JsonProperty("businesses")
     private List<Businesses> businesses;
 
-
     public int getTotal() {
         return total;
     }
@@ -38,7 +41,6 @@ public class HikingTrails {
         this.total = total;
     }
 
-
     public List<Businesses> getBusinesses() {
         return businesses;
     }
@@ -46,7 +48,6 @@ public class HikingTrails {
     public void setBusinesses(List<Businesses> businesses) {
         this.businesses = businesses;
     }
-
 
 }
 
@@ -63,6 +64,10 @@ class Businesses {
     private double rating;
     @JsonProperty("review_count")
     private int reviewCount;
+    @JsonProperty("coordinates")
+    private Coordinates coordinates;
+    @JsonProperty("location")
+    private Address address;
 
     public String getName() {
         return name;
@@ -104,8 +109,66 @@ class Businesses {
         this.reviewCount = reviewCount;
     }
 
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return name;
     }
 }
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Coordinates extends SerializableSerializer {
+
+    @JsonProperty("latitude")
+    private double latitude;
+    @JsonProperty("longitude")
+    private double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Address extends SerializableSerializer{
+
+    @JsonProperty("display_address")
+    @Nullable
+    private String[] displayAddress;
+
+    public String[] getDisplayAddress() {
+        return displayAddress;
+    }
+
+    public void setDisplayAddress(String[] displayAddress) {
+        this.displayAddress = displayAddress;
+    }
+}
+

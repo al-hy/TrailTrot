@@ -12,7 +12,11 @@ import retrofit2.http.Url;
  * Created by ahy on 5/2/17.
  */
 
-public interface YelpService {
+public interface Service {
+
+    /**
+     * Calling Yelp API
+     */
     @POST("/oauth2/token")
     Call<YelpInfo> getRouteVehicles(@Query("grant_type") String type, @Query("client_id") String id,
                                     @Query("client_secret") String secret);
@@ -25,9 +29,9 @@ public interface YelpService {
                                        @Query("limit") int limit);
     @GET("/v3/businesses/search")
     Call<HikingTrails> searchLocation(@Header("Authorization") String accessToken,
-    @Query("term") String term,
-    @Query("location") String location,
-    @Query("limit") int limit);
+                                      @Query("term") String term,
+                                      @Query("location") String location,
+                                      @Query("limit") int limit);
 
     @GET("/v3/businesses/{id}/reviews")
     Call<TrailReviews> getTrailReviews(@Header("Authorization") String accessToken,
@@ -36,5 +40,15 @@ public interface YelpService {
     @GET("/v3/businesses/{id}")
     Call<SelectedTrailInfo> getExtraPhotos(@Header("Authorization") String accessToken,
                                        @Path("id") String id);
+
+
+    /**
+     * Calling DarkSky API
+     */
+
+    @GET("/forecast/{key}/{latitude},{longitude}?exclude=minutely,hourly,alerts,flags")
+    Call<Weather> getForecast(@Path("key") String apiKey,
+                              @Path("latitude") double latitude,
+                              @Path("longitude") double longitude);
 
 }

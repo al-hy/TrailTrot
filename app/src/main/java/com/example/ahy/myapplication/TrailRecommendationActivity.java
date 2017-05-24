@@ -14,6 +14,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -49,12 +50,13 @@ public class TrailRecommendationActivity extends AppCompatActivity{
     private double latitude;
     private double longitude;
     private EditText editText;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
 //    @BindView(R.id.trailListView)
 //    ListView trailListView;
 
     private YelpInfo yelpInfo;
-    private YelpService service;
+    private Service service;
 
     //When creating a listView, an adapter is needed for dynamic retrieval
     private TrailRecommendationActivityAdapter trailRecommendationActivityAdapter;
@@ -80,6 +82,13 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 Log.i("LAT", Double.toString(latitude));
                 Log.i("LONG", Double.toString(longitude));
                 getYelp(null);
+
+                if(swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
+                locationManager.removeUpdates(locationListener);
+
                 //textView.append("\n " + location.getLatitude() + " " + location.getLongitude());
             }
 
@@ -122,6 +131,16 @@ public class TrailRecommendationActivity extends AppCompatActivity{
         button = (Button) findViewById(R.id.searchButton);
         configure_button();
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                configure_button();
+            }
+        });
+
+
         //End of Location Services
 
 
@@ -156,8 +175,8 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 PackageManager.PERMISSION_GRANTED) {
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[] {
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.INTERNET
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.INTERNET
                 }, 10);
             }
 
@@ -167,9 +186,25 @@ public class TrailRecommendationActivity extends AppCompatActivity{
 //        button.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-                locationManager.requestLocationUpdates("gps", 0, 5, locationListener);
+
+            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+               locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 0, locationListener);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, locationListener);
+            }
 //            }
 //        });
+
+//        Location location = locationManager.getLastKnownLocation("gps");
+//        latitude = location.getLatitude();
+//        longitude = location.getLongitude();
+//        Log.i("LAT", Double.toString(latitude));
+//        Log.i("LONG", Double.toString(longitude));
+//        getYelp(null);
+
+
+
+
     }
 
     public void getYelp(@Nullable final String searchLocation) {
@@ -183,7 +218,7 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(YelpService.class);
+        service = retrofit.create(Service.class);
 
 
         Call<YelpInfo> routeInfoCall = service.getRouteVehicles("client_credentials", getString(R.string.id), getString(R.string.secret));
