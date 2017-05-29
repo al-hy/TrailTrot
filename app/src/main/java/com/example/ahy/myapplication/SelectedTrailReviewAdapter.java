@@ -1,14 +1,18 @@
 package com.example.ahy.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -26,6 +30,7 @@ public class SelectedTrailReviewAdapter extends ArrayAdapter<Reviews> {
     private List<Reviews> reviews;
     private ImageView imageView;
     private ImageView ratingBar;
+    private LinearLayout directToYelp;
 
     public SelectedTrailReviewAdapter(@NonNull Context context,
                                       @LayoutRes int resource, @NonNull List<Reviews> reviews) {
@@ -43,6 +48,7 @@ public class SelectedTrailReviewAdapter extends ArrayAdapter<Reviews> {
         View view = layoutInflater.inflate(layoutResource, parent, false);
         imageView = (ImageView) view.findViewById(R.id.userImage);
         ratingBar = (ImageView) view.findViewById(R.id.reviewRating);
+        directToYelp = (LinearLayout) view.findViewById(R.id.directToYelp);
         final TextView trailReview = (TextView) view.findViewById(R.id.trailReview);
         final TextView nameOfUser = (TextView) view.findViewById(R.id.nameOfUser);
 
@@ -102,17 +108,14 @@ public class SelectedTrailReviewAdapter extends ArrayAdapter<Reviews> {
          * Make each Yelp Review clickable and open up in browser
          */
 
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(context, SelectedTrailActivity.class);
-//                intent.putExtra("image", trailRecommendation.get(position).getImageURL());
-//                intent.putExtra("name", trailRecommendation.get(position).getName());
-//                intent.putExtra("yelpInfo", yelpInfo);
-//                intent.putExtra("id", trailRecommendation.get(position).getId());
-//                context.startActivity(intent);
-//            }
-//        });
+        directToYelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent internetBrowser = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(reviews.get(position).getUrl()));
+                context.startActivity(internetBrowser);
+            }
+        });
 
         return view;
     }

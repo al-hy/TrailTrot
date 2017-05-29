@@ -70,6 +70,9 @@ class Businesses implements Comparable<Businesses> {
     private Coordinates coordinates;
     @JsonProperty("location")
     private Address address;
+    @JsonProperty("url")
+    private String url;
+
     private double distance;
 
     public String getName() {
@@ -134,6 +137,14 @@ class Businesses implements Comparable<Businesses> {
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override

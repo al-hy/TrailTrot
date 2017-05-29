@@ -146,6 +146,7 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
                 intent.putExtra("id", trailRecommendation.get(position).getId());
                 intent.putExtra("address", trailRecommendation.get(position).getAddress());
                 intent.putExtra("rating", Double.toString(trailRecommendation.get(position).getRating()));
+                intent.putExtra("url", trailRecommendation.get(position).getUrl());
                 context.startActivity(intent);
             }
         });

@@ -265,7 +265,10 @@ public class TrailRecommendationActivity extends AppCompatActivity{
             public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
                 HikingTrails hikingTrails = response.body();
 
-
+                /**
+                 * HANDLE NULL EXCEPTION WHEN THERE IS NOTHING TO DISPLAY. EITHER THERE IS NOTHING INPUTTED IN
+                 * THE SEARCH BAR OR NETWORK DID NOT RESPOND
+                 */
                 List<Businesses> trails = hikingTrails.getBusinesses();
 
 

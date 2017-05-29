@@ -85,7 +85,7 @@
             android:layout_marginRight="5dp"
             android:gravity="left|center"
             android:textSize="10dp"
-            android:text="Powered by DarkSky"
+            android:text="Powered by Dark Sky"
             android:textColor="#FFFFFF"/>
 
         <LinearLayout
@@ -108,7 +108,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:onClick="onClick"
+            android:clickable="true"
+            android:id="@+id/setMap">
 
             <TextView
                 android:id="@+id/selectedTrailName"
@@ -161,6 +164,7 @@
 
 
         <LinearLayout
+            android:id="@+id/moreInfoOnYelp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -172,7 +176,8 @@
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:onClick="onClick">
 
             <TextView
                 android:layout_width="wrap_content"

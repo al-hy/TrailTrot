@@ -1,14 +1,17 @@
 package com.example.ahy.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,7 +25,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-public class SelectedTrailActivity extends AppCompatActivity {
+public class SelectedTrailActivity extends AppCompatActivity{
 
     private YelpInfo yelpInfo;
     private Service service1;
@@ -33,7 +36,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private ListView extraImages;
     private ImageView imageView;
     private TextView textView;
-    private String image, id, name;
+    private String image, id, name, url;
     private SelectedTrailReviewAdapter selectedTrailReviewAdapter;
     private ImageView ratingBar;
     private TextView addressLine1;
@@ -44,6 +47,8 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private TextView currentTemperature;
     private ImageView currentWeather;
     private ImageView yelpLogo;
+    private LinearLayout address;
+    private LinearLayout moreInfoOnYelp;
 
 
     private RecyclerView recyclerViewWeather;
@@ -65,6 +70,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
         yelpInfo = (YelpInfo) intent.getSerializableExtra("yelpInfo");
         name = intent.getStringExtra("name");
         id = intent.getStringExtra("id");
+        url =  intent.getStringExtra("url");
         displayAddress = (Address) intent.getSerializableExtra("address");
         coordinates = (Coordinates) intent.getSerializableExtra("coordinates");
         rating = intent.getStringExtra("rating");
@@ -75,6 +81,8 @@ public class SelectedTrailActivity extends AppCompatActivity {
         currentWeather = (ImageView) findViewById(R.id.currentWeather);
         currentTemperature = (TextView) findViewById(R.id.currentTemperature);
         yelpLogo = (ImageView) findViewById(R.id.yelpLogo);
+        address = (LinearLayout) findViewById(R.id.setMap);
+        moreInfoOnYelp = (LinearLayout) findViewById(R.id.moreInfoOnYelp);
 
 
         /**
@@ -95,6 +103,24 @@ public class SelectedTrailActivity extends AppCompatActivity {
         recyclerViewWeather.setLayoutManager(layoutManagerWeather);
 
 
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TrailMapsActivity.class);
+                intent.putExtra("latitude", coordinates.getLatitude());
+                intent.putExtra("longitude", coordinates.getLongitude());
+                intent.putExtra("name", name);
+                startActivity(intent);
+            }
+        });
+
+        moreInfoOnYelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent internetBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(internetBrowser);
+            }
+        });
 
         /**
          * PASS THE ACCESS TOKEN! RETRIEVE FROM INTENT
@@ -376,4 +402,5 @@ public class SelectedTrailActivity extends AppCompatActivity {
         getWeather.execute();
 
     }
+
 }
