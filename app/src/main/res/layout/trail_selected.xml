@@ -32,7 +32,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
 
 
             <LinearLayout
@@ -72,6 +73,20 @@
 
         </LinearLayout>
         <!--</LinearLayout>-->
+
+        <TextView
+            android:id="@+id/darkSkyLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#4D000000"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:gravity="left|center"
+            android:textSize="10dp"
+            android:text="Powered by DarkSky"
+            android:textColor="#FFFFFF"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,14 +150,48 @@
 
             <ListView
                 android:nestedScrollingEnabled="true"
-                android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:paddingRight="10dp"
                 android:id="@+id/userReview"
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="250dp">
 
             </ListView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp"
+            android:background="#4D000000"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="11sp"
+                android:gravity="right|center"
+                android:paddingTop="5dp"
+                android:text="More Info on"
+                android:textColor="#FFFFFF"
+                />
+
+            <ImageView
+                android:layout_width="250px"
+                android:layout_height="160px"
+                android:scaleType="centerInside"
+                android:id="@+id/yelpLogo"/>
+
+        </LinearLayout>
     </LinearLayout>
+
+
 </ScrollView>

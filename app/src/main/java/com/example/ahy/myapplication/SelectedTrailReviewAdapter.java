@@ -43,25 +43,19 @@ public class SelectedTrailReviewAdapter extends ArrayAdapter<Reviews> {
         View view = layoutInflater.inflate(layoutResource, parent, false);
         imageView = (ImageView) view.findViewById(R.id.userImage);
         ratingBar = (ImageView) view.findViewById(R.id.reviewRating);
-        final TextView trailName = (TextView) view.findViewById(R.id.trailReview);
+        final TextView trailReview = (TextView) view.findViewById(R.id.trailReview);
         final TextView nameOfUser = (TextView) view.findViewById(R.id.nameOfUser);
 
         nameOfUser.setText(reviews.get(position).getUser().getNameOfUser());
-        trailName.setText(reviews.get(position).getText());
+        trailReview.setText(reviews.get(position).getText() + "More Info on Yelp");
 
         if(reviews.get(position).getUser().getUserImage() == null){
-            Picasso.with(context)
-                    .load(R.drawable.no_image)
-                    .resize(50, 50).centerCrop()
-                    .placeholder(R.drawable.no_image)
-                    .error(R.drawable.no_image)
-                    .into(imageView);
-            imageView.setImageResource(R.drawable.no_image);
+            imageView.setImageResource(R.drawable.ic_person_black_24dp);
         } else {
             try {
                 Picasso.with(context)
                         .load(reviews.get(position).getUser().getUserImage())
-                        .resize(100, 100).centerCrop()
+                        .resize(200, 200).centerCrop()
                         .into(imageView);
             } catch (Exception e) {
                 e.getStackTrace();

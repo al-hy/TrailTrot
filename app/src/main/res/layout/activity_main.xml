@@ -7,15 +7,16 @@
     tools:context="com.example.ahy.myapplication.MainActivity"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/mybackground">
+    android:background="@drawable/mybackground"
+    android:gravity="top|center">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="300dp"
+        android:paddingBottom="400dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:src="@drawable/trailtrotter_logo"/>
+        android:src="@drawable/trailtrotter_logo2"/>
 
 
 </LinearLayout>

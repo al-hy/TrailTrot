@@ -55,17 +55,29 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
         View view = layoutInflater.inflate(layoutResource, parent, false);
         final TextView trailName = (TextView) view.findViewById(R.id.trailName);
         distance = (TextView) view.findViewById(R.id.distance);
+        reviewCount = (TextView) view.findViewById(R.id.recommendationReviewCount);
 
-        trailLocation = new android.location.Location(userLocation);
-        trailLocation.setLatitude(trailRecommendation.get(position).getCoordinates().getLatitude());
-        trailLocation.setLongitude(trailRecommendation.get(position).getCoordinates().getLongitude());
+        /**
+         * Handle Null Location Object here!
+         */
+
+        //trailLocation = new android.location.Location(userLocation);
+        //trailLocation.setLatitude(trailRecommendation.get(position).getCoordinates().getLatitude());
+        //trailLocation.setLongitude(trailRecommendation.get(position).getCoordinates().getLongitude());
 
 
-        float meters = userLocation.distanceTo(trailLocation);
+//        float meters = userLocation.distanceTo(trailLocation);
 
-        double miles = Math.round((meters * 0.000621371192) * 100)/ 100.0;
+        //double miles = Math.round((meters * 0.000621371192) * 100)/ 100.0;
 
-        distance.setText(Double.toString(miles) + " mi");
+
+        //distance.setText(Double.toString(miles) + " mi");
+        distance.setText(Double.toString(Math.round((trailRecommendation.get(position).getDistance() * 0.000621371192) * 100)/ 100.0) + " mi");
+        reviewCount.setText("(" + trailRecommendation.get(position).getReviewCount() + ")");
+
+        /**
+         *
+         */
 
         imageView = (ImageView) view.findViewById(R.id.trailPreviewImage);
         ratingBar = (ImageView) view.findViewById(R.id.selectionRating);

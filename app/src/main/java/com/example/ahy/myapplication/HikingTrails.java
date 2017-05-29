@@ -4,12 +4,14 @@ package com.example.ahy.myapplication;
  * Created by ahy on 5/2/17.
  */
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.SerializableSerializer;
+import com.yelp.fusion.client.models.Business;
 
 import org.json.JSONException;
 
@@ -52,7 +54,7 @@ public class HikingTrails {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Businesses {
+class Businesses implements Comparable<Businesses> {
 
     @JsonProperty("name")
     private String name;
@@ -68,6 +70,7 @@ class Businesses {
     private Coordinates coordinates;
     @JsonProperty("location")
     private Address address;
+    private double distance;
 
     public String getName() {
         return name;
@@ -125,9 +128,22 @@ class Businesses {
         this.address = address;
     }
 
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public int compareTo(@NonNull Businesses o) {
+        return Double.compare(this.getDistance(), o.getDistance());
     }
 }
 

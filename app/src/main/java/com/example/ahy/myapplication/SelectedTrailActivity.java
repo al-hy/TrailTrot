@@ -43,6 +43,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private TextView currentTemperature;
     private ImageView currentWeather;
+    private ImageView yelpLogo;
 
 
     private RecyclerView recyclerViewWeather;
@@ -73,6 +74,7 @@ public class SelectedTrailActivity extends AppCompatActivity {
         reviewCount = (TextView) findViewById(R.id.selectedReviewCount);
         currentWeather = (ImageView) findViewById(R.id.currentWeather);
         currentTemperature = (TextView) findViewById(R.id.currentTemperature);
+        yelpLogo = (ImageView) findViewById(R.id.yelpLogo);
 
 
         /**
@@ -153,6 +155,8 @@ public class SelectedTrailActivity extends AppCompatActivity {
                 ratingBar.setImageResource(R.drawable.stars_small_5);
                 break;
         }
+
+        yelpLogo.setImageResource(R.drawable.yelp_trademark_rgb_outline);
 
         getYelp();
 

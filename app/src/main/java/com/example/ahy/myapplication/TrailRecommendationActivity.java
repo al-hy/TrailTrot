@@ -29,6 +29,8 @@ import android.widget.TextView;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -263,7 +265,18 @@ public class TrailRecommendationActivity extends AppCompatActivity{
             public void onResponse(Call<HikingTrails> call, Response<HikingTrails> response) {
                 HikingTrails hikingTrails = response.body();
 
+
                 List<Businesses> trails = hikingTrails.getBusinesses();
+
+
+                for(Businesses business: trails) {
+                    Location trailLocation = new Location(userLocation);
+                    trailLocation.setLatitude(business.getCoordinates().getLatitude());
+                    trailLocation.setLongitude(business.getCoordinates().getLongitude());
+                    business.setDistance(userLocation.distanceTo(trailLocation) );
+                }
+
+                Collections.sort(trails);
 
                 listView = (ListView) findViewById(R.id.trailListView);
                 trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
