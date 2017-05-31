@@ -269,23 +269,30 @@ public class TrailRecommendationActivity extends AppCompatActivity{
                  * HANDLE NULL EXCEPTION WHEN THERE IS NOTHING TO DISPLAY. EITHER THERE IS NOTHING INPUTTED IN
                  * THE SEARCH BAR OR NETWORK DID NOT RESPOND
                  */
-                List<Businesses> trails = hikingTrails.getBusinesses();
+                if(hikingTrails != null) {
+                    List<Businesses> trails = hikingTrails.getBusinesses();
 
+                    /**
+                     * When the USER LOCATION IS NOT KNOWN handle null exception!
+                     */
+                    if (userLocation != null) {
 
-                for(Businesses business: trails) {
-                    Location trailLocation = new Location(userLocation);
-                    trailLocation.setLatitude(business.getCoordinates().getLatitude());
-                    trailLocation.setLongitude(business.getCoordinates().getLongitude());
-                    business.setDistance(userLocation.distanceTo(trailLocation) );
+                        for (Businesses business : trails) {
+                            Location trailLocation = new Location(userLocation);
+                            trailLocation.setLatitude(business.getCoordinates().getLatitude());
+                            trailLocation.setLongitude(business.getCoordinates().getLongitude());
+                            business.setDistance(userLocation.distanceTo(trailLocation));
+                        }
+
+                        Collections.sort(trails);
+                    }
+
+                    listView = (ListView) findViewById(R.id.trailListView);
+                    trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
+                            TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo, userLocation);
+
+                    listView.setAdapter(trailRecommendationActivityAdapter);
                 }
-
-                Collections.sort(trails);
-
-                listView = (ListView) findViewById(R.id.trailListView);
-                trailRecommendationActivityAdapter = new TrailRecommendationActivityAdapter(
-                        TrailRecommendationActivity.this, R.layout.trail_selection_adapter, trails, yelpInfo, userLocation);
-
-                listView.setAdapter(trailRecommendationActivityAdapter);
             }
 
             @Override

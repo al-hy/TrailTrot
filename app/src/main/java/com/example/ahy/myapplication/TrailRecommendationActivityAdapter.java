@@ -72,8 +72,10 @@ public class TrailRecommendationActivityAdapter extends ArrayAdapter<Businesses>
 
 
         //distance.setText(Double.toString(miles) + " mi");
-        distance.setText(Double.toString(Math.round((trailRecommendation.get(position).getDistance() * 0.000621371192) * 100)/ 100.0) + " mi");
-        reviewCount.setText("(" + trailRecommendation.get(position).getReviewCount() + ")");
+        if(userLocation != null) {
+            distance.setText(Double.toString(Math.round((trailRecommendation.get(position).getDistance() * 0.000621371192) * 100) / 100.0) + " mi");
+        }
+            reviewCount.setText("(" + trailRecommendation.get(position).getReviewCount() + ")");
 
         /**
          *
